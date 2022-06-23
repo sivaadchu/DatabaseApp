@@ -37,7 +37,7 @@ int main()
             database11 << "1. We can add users" << endl;
             database11 << "2. We can view users" << endl;
             database11 << "3. We can clear records" << endl;
-            database11 << "4. You can edit admin password (#define ADMINPASS \"password\")" << endl;
+            database11 << "4. You can use admin password (It is not changeable (default is \"admin\") right now. I'm implementing a feauture soon. Pls wait. Sorry for inconvenience caused by me)" << endl;
             database11 << "-----------------------------------------------------------------------------------------------" << endl;
             database11.close();
         }
