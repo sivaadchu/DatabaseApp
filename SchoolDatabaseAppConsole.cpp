@@ -1,12 +1,43 @@
+// Load Neccessary Libraries
 #include <iostream>
 #include <fstream>
-#include <string>
-#define ADMINPASS "admin" /// Admin Password
+#include <string> 
 
 using namespace std;
 
+
+// Initializing Global Variables
+int count_n3;
+
+void setDefault() {
+    ifstream myfile3;
+    myfile3.open("password.txt");
+    if (myfile3) {
+        cout << "Admin Password Detected." << endl;
+    }
+    else {
+        cout << "Setting up Admin Password" << endl;
+        ofstream database15;
+        database15.open("password.txt");
+        database15 << "admin";
+        database15.close();
+    }
+    myfile3.close();
+} // Admin Pass Default Setting Function
+
+void setAdminPass(string password) {
+    ofstream data;
+    data.open("password.txt");
+    data << password;
+    data.close();
+} // Admin Pass Changing Function
+
 int main()
 {
+    cout << "Pre-loading Works" << endl;
+    cout << "----------------------------------------------------------" << endl;
+
+        setDefault();
         ifstream myfile;
         myfile.open("database.txt");
         if(myfile) {
@@ -30,14 +61,14 @@ int main()
             database11 << "-----------------------------------------------------------------------------------------------" << endl;
             database11 << "School Database App" << endl;
             database11 << "-----------------------------------------------------------------------------------------------" << endl;
-            database11 << "Version 1.0.1 by Sivakumar Adchayan" << endl;
+            database11 << "Version 1.0.2 by Sivakumar Adchayan" << endl;
             database11 << "-----------------------------------------------------------------------------------------------" << endl;
             database11 << "Features" << endl;
             database11 << "-----------------------------------------------------------------------------------------------" << endl;
-            database11 << "1. We can add users" << endl;
-            database11 << "2. We can view users" << endl;
-            database11 << "3. We can clear records" << endl;
-            database11 << "4. You can use admin password (It is not changeable (default is \"admin\") right now. I'm implementing a feauture soon. Pls wait. Sorry for inconvenience caused by me)" << endl;
+            database11 << "1. We can add users & their details" << endl;
+            database11 << "2. We can view users with their details" << endl;
+            database11 << "3. We can clear all the user records" << endl;
+            database11 << "4. You can change admin password. (default is admin, You can change with password.txt too)" << endl;
             database11 << "-----------------------------------------------------------------------------------------------" << endl;
             database11.close();
         }
@@ -48,26 +79,28 @@ loop:
     if (database2.bad()) {
         cout << "Database connection error" << endl;
     }
-    int count_n;
+    
     for (int i = 0; false == database2.eof(); i++) {
         string line;
         getline(database2, line);
-          count_n = i;
+          count_n3 = i;
     }
     database2.close();
     ofstream database3;
     database3.open("database.txt", ios::app);
-    if (count_n == 0) {
-        database3 << "Name" << endl;
+    if (count_n3 == 0) {
+        database3 << "Index\tName\tRoll No.\tDivision\tAverage" << endl;
     }
     database3.close();
-    
+    cout << "----------------------------------------------------------" << endl;
     bool isAdd = false;
     bool isView = false;
     bool isClear = false;
     bool readme = false;
+    bool isChangeAdmin = false;
+
     int input;
-    cout << "Welcome to credential manager.\n1.Add records\n2.View Records\n3.Clear Records\n4.About Software\n5.Exit\nEnter your choice: ";
+    cout << "Welcome to credential manager.\n1.Add records\n2.View Records\n3.Clear Records\n4.About Software\n5.Admin Password Change\n6.Exit\nEnter your choice: ";
     cin >> input;
     switch (input) {
     case 1:
@@ -83,20 +116,31 @@ loop:
         readme = true;
         break;
     case 5:
+        isChangeAdmin = true;
+        break;
+    case 6:
         return 0;
         break;
     default:
-        cout << "Invalid key pressed. Retry";
+        cout << "Invalid key pressed. Retry" << endl;
         goto loop;
     }
     if (isAdd) {
+        int rollno;
+        cout << "Enter your admission number: ";
+        cin >> rollno;
         string charName;
         cout << "Enter your name: ";
         cin >> charName;
-        ofstream database4;
-        database4.open("database.txt", ios::app);
-        // database << "Name" << endl;
-        database4 << charName << endl;
+        string division;
+        cout << "Enter your class with division: ";
+        cin >> division;
+        double average;
+        cout << "Enter your last exam average: ";
+        cin >> average;
+        fstream database4;
+        database4.open("database.txt", ios::in | ios::app);
+        database4 << count_n3 << "\t" << rollno << "\t" << charName << "\t" << division << "\t\t" << average << endl;
         if (database4.is_open()) {
             cout << "Record added" << endl;
         }
@@ -124,7 +168,11 @@ loop:
             string pass;
             cout << "Enter Admin Password: ";
             cin >> pass;
-            if (pass == ADMINPASS) {
+            fstream getAdminPass2;
+            getAdminPass2.open("password.txt");
+            string passl2;
+            getAdminPass2 >> passl2;
+            if (pass == passl2) {
                 ofstream database5;
                 database5.open("database.txt");
                 database5 << "";
@@ -146,7 +194,51 @@ loop:
             cout << line << endl;
         }
     }
+    if (isChangeAdmin) {
+        bool retry2 = false;
+        do {
+            string currentPass;
+            string newPass1;
+            string newPass2;
+            bool valueGot = false;
+            do {
+                retry2 = false;
+                cout << "Enter your current password: ";
+                cin >> currentPass;
+                cout << "Enter your new password: ";
+                cin >> newPass1;
+                cout << "Re-enter your new password: ";
+                cin >> newPass2;
+                if (currentPass == "") {
+                    valueGot = false;
+                }
+                else {
+                    valueGot = true;
+                }
+            } while (valueGot == false);
+            if (newPass1 == newPass2) {
+                ifstream getAdminPass;
+                getAdminPass.open("password.txt");
+                string passl;
+                getAdminPass >> passl;
+                getAdminPass.close();
+                if (passl == currentPass) {
+                    setAdminPass(newPass2);
+                    cout << "Password Updated." << endl;
+                }
+                else {
+                    cout << "Old Password is incorrect" << endl;
+                    retry2 = true;
+                }
+                
+            }
+            else {
+                cout << "New passwords doesn't match" << endl;
+                retry2 = true;
+            }
+        } while (retry2 == true);
+    }
     goto loop;
 
-}
+} // Main Function
 
