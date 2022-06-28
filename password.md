@@ -1,3 +1,3 @@
 # Admin Password
 Default Password for Admin is "admin" 
-A feature coming soon to change it
+A feature released to change admin password (v1.0.2)
